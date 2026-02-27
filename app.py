@@ -3,11 +3,10 @@ import google.generativeai as genai
 import re
 
 # 🔐 SECURE API CONFIGURATION
-# This setup prevents your key from being stolen and allows Streamlit to run it safely.
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=API_KEY)
-    # Using gemini-1.5-flash for better stability and speed
+    # Keeping gemini-2.5-flash as per your preference
     model = genai.GenerativeModel('gemini-2.5-flash')
 except Exception as e:
     st.error("Missing API Key! Please add 'GEMINI_API_KEY' to your Streamlit Secrets.")
@@ -18,10 +17,15 @@ st.set_page_config(page_title="Personalized AI Wellness", layout="wide", page_ic
 # 🎨 Theme Styling
 st.markdown("""
 <style>
-    header, [data-testid="stHeader"], [data-testid="stDecoration"] {
+    /* FIX: Targeted hiding of header background while keeping buttons visible */
+    [data-testid="stHeader"] {
+        background-color: rgba(0,0,0,0) !important;
+        color: white !important;
+    }
+    
+    /* Hides the decoration line at the top */
+    [data-testid="stDecoration"] {
         display: none !important;
-        visibility: hidden !important;
-        height: 0px !important;
     }
 
     @keyframes gradient {
@@ -190,7 +194,7 @@ if generate:
                     """, unsafe_allow_html=True)
 
             except Exception as e:
-                st.error("AI service error. Please check your API key in Secrets.")
+                st.error(f"AI service error: {str(e)}")
 
 else:
     st.markdown("<div style='text-align: center; color: white; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;'>👈 Enter your details in the sidebar and then click 'Generate My Personalized Plan'</div>", unsafe_allow_html=True)
